@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug
+npm-debug.log*
+pnpm-debug.log*
+
+# Prisma
+packages/db/prisma/*.db
+packages/db/prisma/*.db-journal
+
+# Turbo
+.turbo/
+
+# Misc
+*.tsbuildinfo

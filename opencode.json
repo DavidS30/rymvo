@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "arquitectura_transporte_mvp.md",
+    "apoyo_tecnico.md"
+  ],
+  "permission": {
+    "edit": "allow",
+    "bash": "allow"
+  }
+}

@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PASSENGER
+  DRIVER
+  ADMIN
+}
+
+enum ServiceType {
+  AIRPORT
+  HOURLY
+  EVENT
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  REQUIRES_PAYMENT
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id               String    @id @default(uuid())
+  clerkUserId      String    @unique @map("clerk_user_id")
+  email            String    @unique
+  fullName         String    @map("full_name")
+  phone            String?
+  role             Role      @default(PASSENGER)
+  stripeCustomerId String?   @map("stripe_customer_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  bookingsAsPassenger Booking[] @relation("PassengerBookings")
+  bookingsAsDriver    Booking[] @relation("DriverBookings")
+
+  @@map("users")
+}
+
+model Booking {
+  id               String        @id @default(uuid())
+  passenger        User          @relation("PassengerBookings", fields: [passengerId], references: [id])
+  passengerId      String        @map("passenger_id")
+  driver           User?         @relation("DriverBookings", fields: [driverId], references: [id])
+  driverId         String?       @map("driver_id")
+  originAddress    String        @map("origin_address")
+  originLat        Decimal       @map("origin_lat")
+  originLng        Decimal       @map("origin_lng")
+  destAddress      String        @map("dest_address")
+  destLat          Decimal       @map("dest_lat")
+  destLng          Decimal       @map("dest_lng")
+  scheduledAt      DateTime      @map("scheduled_at")
+  serviceType      ServiceType   @map("service_type")
+  status           BookingStatus @default(PENDING)
+  baseFareCents    Int           @map("base_fare_cents")
+  platformFeeCents Int           @map("platform_fee_cents")
+  distanceKm       Decimal       @map("distance_km")
+  specialNotes     String?       @map("special_notes")
+  createdAt        DateTime      @default(now()) @map("created_at")
+
+  payment Payment?
+
+  @@map("bookings")
+}
+
+model Payment {
+  id                    String        @id @default(uuid())
+  booking               Booking       @relation(fields: [bookingId], references: [id])
+  bookingId             String        @unique @map("booking_id")
+  stripePaymentIntentId String        @unique @map("stripe_payment_intent_id")
+  amountCents           Int           @map("amount_cents")
+  currency              String        @default("usd")
+  status                PaymentStatus @default(REQUIRES_PAYMENT)
+  paidAt                DateTime?     @map("paid_at")
+  receiptUrl            String?       @map("receipt_url")
+
+  @@map("payments")
+}
+
+model FareRule {
+  id              String      @id @default(uuid())
+  serviceType     ServiceType @unique @map("service_type")
+  baseFareCents   Int         @map("base_fare_cents")
+  pricePerKmCents Int         @map("price_per_km_cents")
+  pricePerHourCents Int?      @map("price_per_hour_cents")
+  platformFeePct  Decimal     @default(7.00) @map("platform_fee_pct")
+  isActive        Boolean     @default(true) @map("is_active")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@map("fare_rules")
+}
