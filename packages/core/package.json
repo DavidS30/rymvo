@@ -10,6 +10,7 @@
     "./types": "./src/types/index.ts",
     "./utils": "./src/utils/index.ts",
     "./services": "./src/services/index.ts",
+    "./lib": "./src/lib/index.ts",
     "./hooks": "./src/hooks/index.ts",
     "./constants": "./src/constants/index.ts"
   },
@@ -19,7 +20,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@repo/db": "workspace:*"
+    "@repo/db": "workspace:*",
+    "stripe": "^17.4.0",
+    "resend": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

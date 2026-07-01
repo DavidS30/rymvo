@@ -1,4 +1,4 @@
-import {ClerkProvider} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import "@repo/ui-web/styles.css";
 
 export default function RootLayout({
@@ -9,7 +9,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        <ClerkProvider>
+        <ClerkProvider
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          signInFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/"
+        >
           {children}
         </ClerkProvider>
       </body>

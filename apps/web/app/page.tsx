@@ -1,18 +1,21 @@
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+"use client";
 
-export default async function HomePage() {
-  const { userId } = await auth();
+import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
+
+export default function HomePage() {
+  const { isSignedIn, isLoaded } = useAuth();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6">
       <h1 className="text-4xl font-bold">Rymvo</h1>
       <p className="text-xl text-muted-foreground">Transporte de lujo</p>
 
-      {userId ? (
+      {!isLoaded ? (
+        <div className="h-10 w-32 animate-pulse rounded-md bg-muted" />
+      ) : isSignedIn ? (
         <div className="flex flex-col items-center gap-4">
           <p className="text-green-600">Sesión iniciada</p>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       ) : (
         <div className="flex gap-4">

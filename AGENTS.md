@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 | Categoría | Tecnología |
 |-----------|-----------|
 | Monorepo | Turborepo + pnpm workspaces |
-| Framework | Next.js 16 (App Router) |
+| Framework | Next.js 15.5 (App Router) |
 | Lenguaje | TypeScript 5+ strict |
 | Auth | Clerk (`@clerk/nextjs`) |
 | ORM | Prisma 5+ |
@@ -46,7 +46,7 @@ apps/web/          ← Next.js 16 (App Router) — única app en Fase 1
     (admin)/       ← backoffice admin
     api/v1/        ← todos los endpoints REST
   components/      ← componentes UI exclusivos de web
-  proxy.ts         ← Clerk auth middleware (Next.js 16 usa proxy.ts, no middleware.ts)
+  middleware.ts    ← Clerk auth middleware (Next.js 15 usa middleware.ts)
 
 packages/
   core/            ← lógica compartida (hooks, services, types, utils, constants)
@@ -88,13 +88,13 @@ Seguir este orden EXACTO. No avanzar sin completar el paso anterior.
 - [x] **Paso 2**: Definir `packages/db/prisma/schema.prisma` completo y correr migración inicial
 - [x] **Paso 3**: Generar cliente Prisma y exponerlo como singleton en `packages/db/index.ts`
 - [x] **Paso 4**: Construir `packages/core`: types/ → utils/ (calcFare) → services/ (bookingService, quoteService)
-- [x] **Paso 5**: Configurar Clerk en `apps/web`: SDK, variables de entorno, `proxy.ts`
+- [x] **Paso 5**: Configurar Clerk en `apps/web`: SDK, variables de entorno, `middleware.ts`
 - [x] **Paso 6**: Implementar `POST /api/v1/clerk-webhook` para sincronizar usuarios
-- [ ] **Paso 7**: Implementar `GET /api/v1/quotes` y `GET /api/v1/availability`
-- [ ] **Paso 8**: Implementar `POST /api/v1/bookings` + Stripe PaymentIntent
-- [ ] **Paso 9**: Implementar `POST /api/v1/stripe-webhook` con verificación de firma
-- [ ] **Paso 10**: Integrar Resend para emails de confirmación
-- [ ] **Paso 11**: Construir UI del pasajero (`/passenger/book`)
+- [x] **Paso 7**: Implementar `GET /api/v1/quotes` y `GET /api/v1/availability`
+- [x] **Paso 8**: Implementar `POST /api/v1/bookings` + Stripe PaymentIntent
+- [x] **Paso 9**: Implementar `POST /api/v1/stripe-webhook` con verificación de firma
+- [x] **Paso 10**: Integrar Resend para emails de confirmación
+- [x] **Paso 11**: Construir UI del pasajero (`/passenger/book`)
 - [ ] **Paso 12**: Construir portal del conductor (`/driver/schedule`)
 - [ ] **Paso 13**: Construir backoffice admin (`/admin/bookings`)
 - [ ] **Paso 14**: Pruebas end-to-end con Stripe modo test
