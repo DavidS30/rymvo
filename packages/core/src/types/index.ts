@@ -69,6 +69,7 @@ export type QuoteInput = {
   destLat: number;
   destLng: number;
   serviceType: ServiceType;
+  hours?: number;
 };
 
 export type QuoteResponse = {

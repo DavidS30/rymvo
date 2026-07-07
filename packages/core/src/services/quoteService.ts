@@ -1,5 +1,5 @@
 import { prisma } from "@repo/db";
-import { calcFare, haversineDistance } from "../utils";
+import { calcFare, calcHourlyFare, haversineDistance } from "../utils";
 import type { QuoteInput, QuoteResponse } from "../types";
 
 export async function getQuote(input: QuoteInput): Promise<QuoteResponse> {
@@ -14,6 +14,32 @@ export async function getQuote(input: QuoteInput): Promise<QuoteResponse> {
     throw new Error(`No hay tarifa activa para ${input.serviceType}`);
   }
 
+  // HOURLY: tarifa basada en horas, no en distancia
+  if (input.serviceType === "HOURLY") {
+    const hours = input.hours ?? 1;
+    const result = calcHourlyFare(
+      {
+        id: rule.id,
+        serviceType: rule.serviceType,
+        baseFareCents: rule.baseFareCents,
+        pricePerKmCents: rule.pricePerKmCents,
+        pricePerHourCents: rule.pricePerHourCents ?? undefined,
+        platformFeePct: Number(rule.platformFeePct),
+        isActive: rule.isActive,
+      },
+      hours
+    );
+
+    return {
+      fareCents: result.fareCents,
+      platformFeeCents: result.platformFeeCents,
+      totalCents: result.totalCents,
+      distanceKm: 0,
+      durationMin: hours * 60,
+    };
+  }
+
+  // AIRPORT / EVENT: tarifa basada en distancia
   const { distanceKm, durationMin } = await getDistanceAndDuration(
     input.originLat,
     input.originLng,

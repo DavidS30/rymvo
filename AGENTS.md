@@ -95,8 +95,8 @@ Seguir este orden EXACTO. No avanzar sin completar el paso anterior.
 - [x] **Paso 9**: Implementar `POST /api/v1/stripe-webhook` con verificación de firma
 - [x] **Paso 10**: Integrar Resend para emails de confirmación
 - [x] **Paso 11**: Construir UI del pasajero (`/passenger/book`)
-- [ ] **Paso 12**: Construir portal del conductor (`/driver/schedule`)
-- [ ] **Paso 13**: Construir backoffice admin (`/admin/bookings`)
+- [x] **Paso 12**: Construir portal del conductor (`/driver/schedule`)
+- [x] **Paso 13**: Construir backoffice admin (`/admin/bookings`)
 - [ ] **Paso 14**: Pruebas end-to-end con Stripe modo test
 - [ ] **Paso 15**: Deploy a Vercel
 

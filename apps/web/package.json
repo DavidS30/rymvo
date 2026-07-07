@@ -18,15 +18,18 @@
     "@stripe/react-stripe-js": "^6.6.0",
     "@stripe/stripe-js": "^9.8.0",
     "@tailwindcss/postcss": "^4.0.0",
+    "leaflet": "^1.9.4",
     "next": "^15.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0",
     "resend": "^4.1.0",
     "stripe": "^17.4.0",
     "svix": "^1.45.0",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
