@@ -1,1 +1,77 @@
 @import "tailwindcss";
+
+@theme {
+  --color-rymvo-ink: #090909;
+  --color-rymvo-panel: #111110;
+  --color-rymvo-auth-button: #292721;
+  --color-rymvo-gold: #d9a84e;
+  --color-rymvo-gold-light: #edc477;
+  --color-rymvo-paper: #f5f1e9;
+  --color-rymvo-muted: #8e8a82;
+  --color-rymvo-line: rgba(255, 255, 255, 0.1);
+  --font-sans: Arial, Helvetica, sans-serif;
+}
+
+:root { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+* { border-color: rgba(255, 255, 255, 0.1); }
+body { background: var(--color-rymvo-ink); color: var(--color-rymvo-paper); }
+*:focus-visible { outline: 2px solid var(--color-rymvo-gold); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+
+.rymvo-shell { min-height: 100vh; background: var(--color-rymvo-ink); color: var(--color-rymvo-paper); }
+.rymvo-topbar { border-color: var(--color-rymvo-line); background: rgba(9, 9, 9, 0.92); }
+.rymvo-card { border: 1px solid var(--color-rymvo-line); background: var(--color-rymvo-panel); box-shadow: 0 18px 50px rgba(0, 0, 0, .18); }
+.rymvo-eyebrow { color: var(--color-rymvo-gold); font-size: .68rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.rymvo-button { background: var(--color-rymvo-gold); color: var(--color-rymvo-ink); font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; transition: background .2s, transform .2s; }
+.rymvo-button:hover { background: var(--color-rymvo-gold-light); transform: translateY(-1px); }
+.rymvo-theme-toggle { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid rgba(217, 168, 78, .55); padding: .65rem .8rem; color: var(--color-rymvo-gold-light); font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; transition: background .2s, color .2s, border-color .2s; }
+.rymvo-theme-toggle:hover { border-color: var(--color-rymvo-gold-light); background: rgba(217, 168, 78, .16); color: var(--color-rymvo-paper); }
+.rymvo-select, .rymvo-date-input { border-color: rgba(217, 168, 78, .42); background-color: var(--color-rymvo-panel); color: var(--color-rymvo-paper); outline: none; transition: border-color .2s, box-shadow .2s; }
+.rymvo-select:hover, .rymvo-date-input:hover, .rymvo-select:focus, .rymvo-date-input:focus { border-color: var(--color-rymvo-gold); box-shadow: 0 0 0 3px rgba(217, 168, 78, .14); }
+.rymvo-date-input { color-scheme: dark; min-width: 0; max-width: 100%; font-size: 16px; }
+@media (min-width: 640px) { :root { --rymvo-map-height: 400px; } }
+.rymvo-shell a:hover { text-decoration-color: var(--color-rymvo-gold); }
+.rymvo-shell button:not(.rymvo-theme-toggle):hover, .rymvo-shell a.border:hover { border-color: var(--color-rymvo-gold-light); }
+
+/* Shared dark surface defaults keep legacy panel classes on-brand. */
+.bg-white { background-color: var(--color-rymvo-panel); }
+.bg-gray-50 { background-color: var(--color-rymvo-ink); }
+.bg-gray-100 { background-color: #1b1b19; }
+.text-gray-900, .text-gray-800, .text-gray-700 { color: var(--color-rymvo-paper); }
+.text-gray-600, .text-gray-500, .text-gray-400 { color: rgba(245, 241, 233, .52); }
+.border-gray-200, .border-gray-300 { border-color: rgba(255, 255, 255, .12); }
+.hover\:bg-gray-50:hover { background-color: #1b1b19; }
+
+:root[data-theme="light"] {
+  --color-rymvo-ink: #f2f1ed;
+  --color-rymvo-panel: #ffffff;
+  --color-rymvo-auth-button: #f1f0ec;
+  --color-rymvo-paper: #171716;
+  --color-rymvo-muted: #686862;
+  --color-rymvo-line: rgba(23, 23, 22, .14);
+}
+:root[data-theme="light"] * { border-color: rgba(23, 23, 22, .14); }
+:root[data-theme="light"] .rymvo-topbar { background: rgba(242, 241, 237, .94); }
+:root[data-theme="light"] .text-white\/55, :root[data-theme="light"] .text-white\/50, :root[data-theme="light"] .text-white\/45, :root[data-theme="light"] .text-white\/40, :root[data-theme="light"] .text-white\/35 { color: rgba(23, 23, 22, .58); }
+:root[data-theme="light"] .text-white\/75, :root[data-theme="light"] .text-white\/70 { color: rgba(23, 23, 22, .78); }
+:root[data-theme="light"] .text-white\/50, :root[data-theme="light"] .text-white\/45, :root[data-theme="light"] .text-white\/40, :root[data-theme="light"] .text-white\/35, :root[data-theme="light"] .text-white\/25 { color: rgba(23, 23, 22, .58); }
+:root[data-theme="light"] .text-white { color: var(--color-rymvo-paper); }
+:root[data-theme="light"] .bg-black { background-color: var(--color-rymvo-paper); color: var(--color-rymvo-ink); }
+:root[data-theme="light"] .bg-gray-50 { background-color: var(--color-rymvo-ink); }
+:root[data-theme="light"] .text-gray-900, :root[data-theme="light"] .text-gray-800, :root[data-theme="light"] .text-gray-700 { color: #272724; }
+:root[data-theme="light"] .text-gray-600, :root[data-theme="light"] .text-gray-500 { color: #5f5d57; }
+:root[data-theme="light"] .text-gray-400 { color: #77746c; }
+:root[data-theme="light"] .bg-white { background-color: #fff; }
+:root[data-theme="light"] .bg-gray-50, :root[data-theme="light"] .hover\:bg-gray-50:hover { background-color: #e8e7e2; }
+:root[data-theme="light"] .border-gray-200, :root[data-theme="light"] .border-gray-300 { border-color: #c9c7c0; }
+:root[data-theme="light"] .rymvo-shell aside { background-color: #ebeae5; }
+:root[data-theme="light"] .rymvo-shell aside .text-white\/25 { color: #65625b; }
+:root[data-theme="light"] .rymvo-shell aside .text-white { color: #1d1c19; }
+:root[data-theme="light"] .rymvo-shell aside .border-white\/10 { border-color: #d1cfc7; }
+:root[data-theme="light"] .rymvo-date-input { color-scheme: light; }
+:root[data-theme="light"] .rymvo-landing .bg-white\/10 { background-color: rgba(23, 23, 22, .1); }
+:root[data-theme="light"] .rymvo-landing .border-white\/10 { border-color: rgba(23, 23, 22, .14); }
+:root[data-theme="light"] .rymvo-landing .hover\:bg-\[\#191816\]:hover { background-color: #e9e8e3; }
+:root[data-theme="light"] .rymvo-landing .text-white\/30 { color: rgba(23, 23, 22, .35); }
+:root[data-theme="light"] .rymvo-landing .text-white\/10 { color: rgba(23, 23, 22, .1); }

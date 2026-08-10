@@ -9,26 +9,25 @@ export async function POST(req: Request) {
 
   const stripe = getStripe();
 
-  if (stripe && webhookSecret && webhookSecret !== "whsec_placeholder") {
-    try {
-      const event = stripe.webhooks.constructEvent(
-        body,
-        signature!,
-        webhookSecret
-      );
+  if (!stripe || !webhookSecret || webhookSecret === "whsec_placeholder") {
+    console.error("[stripe-webhook] Webhook secret no configurado");
+    return Response.json({ error: "Configuración de webhook pendiente" }, { status: 500 });
+  }
 
-      return await handleStripeEvent(event as { type: string; data: { object: { id: string } } });
-    } catch (err) {
-      console.error("[stripe-webhook] Signature verification failed:", err);
-      return Response.json({ error: "Firma inválida" }, { status: 400 });
-    }
+  if (!signature) {
+    return Response.json({ error: "Falta firma de Stripe" }, { status: 400 });
   }
 
   try {
-    const event = JSON.parse(body) as { type: string; data: { object: { id: string } } };
-    return await handleStripeEvent(event);
-  } catch {
-    return Response.json({ error: "Body JSON inválido" }, { status: 400 });
+    const event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      webhookSecret
+    );
+    return await handleStripeEvent(event as { type: string; data: { object: { id: string } } });
+  } catch (err) {
+    console.error("[stripe-webhook] Signature verification failed:", err);
+    return Response.json({ error: "Firma inválida" }, { status: 400 });
   }
 }
 

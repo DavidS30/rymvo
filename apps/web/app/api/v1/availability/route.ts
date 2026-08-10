@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     );
   }
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(new Date(date).getTime())) {
     return Response.json(
       { error: "Formato de fecha inválido. Usar YYYY-MM-DD" },
       { status: 400 }
@@ -28,9 +28,10 @@ export async function GET(req: Request) {
     const slots = await getAvailableSlots(date);
     return Response.json({ availableSlots: slots });
   } catch (error) {
+    console.error("[availability] Error:", error);
     return Response.json(
-      { error: (error as Error).message },
-      { status: 400 }
+      { error: "Error interno del servidor" },
+      { status: 500 }
     );
   }
 }

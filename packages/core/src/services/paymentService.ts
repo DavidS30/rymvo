@@ -7,17 +7,23 @@ export async function createPaymentIntent(
   bookingId: string,
   totalCents: number
 ): Promise<PaymentIntentResponse> {
-  const payment = await prisma.payment.create({
-    data: {
-      bookingId,
-      amountCents: totalCents,
-      stripePaymentIntentId: "pending",
-    },
-  });
-
   const stripe = getStripe();
 
   if (!stripe) {
+    const allowDev = process.env.NEXT_PUBLIC_ENABLE_DEV_PAYMENTS === "true";
+
+    if (!allowDev) {
+      throw new Error("Configuración de pagos no disponible");
+    }
+
+    await prisma.payment.create({
+      data: {
+        bookingId,
+        amountCents: totalCents,
+        stripePaymentIntentId: `dev_${bookingId}`,
+      },
+    });
+
     return {
       bookingId,
       status: "PENDING",
@@ -28,12 +34,15 @@ export async function createPaymentIntent(
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalCents,
     currency: "usd",
-    metadata: { bookingId, paymentId: payment.id },
+    metadata: { bookingId },
   });
 
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: { stripePaymentIntentId: paymentIntent.id },
+  await prisma.payment.create({
+    data: {
+      bookingId,
+      amountCents: totalCents,
+      stripePaymentIntentId: paymentIntent.id,
+    },
   });
 
   return {

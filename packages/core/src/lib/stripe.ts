@@ -10,9 +10,7 @@ export function getStripe(): Stripe | null {
   }
 
   if (!stripeInstance) {
-    stripeInstance = new Stripe(key, {
-      apiVersion: "2025-06-30.acacia" as any,
-    });
+    stripeInstance = new Stripe(key);
   }
 
   return stripeInstance;

@@ -38,6 +38,7 @@ export async function POST(req: Request) {
 ## Estructura del proyecto
 
 ```
+
 apps/web/          ← Next.js 16 (App Router) — única app en Fase 1
   app/
     (public)/      ← landing, login, signup
@@ -53,6 +54,10 @@ packages/
   db/              ← Prisma schema + cliente singleton
   ui-web/          ← Design system (shadcn/ui + Tailwind)
 ```
+
+## Uso de skills
+
+Antes de implementar cambios, revisar las skills instaladas en `.agents/skills/` y aplicar las que correspondan al stack y al problema: Next.js, React, Tailwind, accesibilidad, SEO, Clerk, Prisma, Stripe y Turborepo. Las skills son una guía de decisión y verificación, no sustituyen la revisión del código existente; validar siempre permisos en servidor, límites entre Server y Client Components, responsive design, accesibilidad y los comandos de build/typecheck.
 
 ## Variables de entorno (.env)
 

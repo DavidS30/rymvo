@@ -123,3 +123,26 @@ export type PaymentIntentResponse = {
   status: "PENDING";
   stripeClientSecret: string;
 };
+
+export type SanitizedBooking = {
+  id: string;
+  passengerId: string;
+  passengerName: string;
+  driverId: string | null;
+  driverName: string | null;
+  originAddress: string;
+  originLat: number;
+  originLng: number;
+  destAddress: string;
+  destLat: number;
+  destLng: number;
+  scheduledAt: string;
+  serviceType: ServiceType;
+  status: BookingStatus;
+  baseFareCents: number;
+  platformFeeCents: number;
+  distanceKm: number;
+  specialNotes?: string;
+  createdAt: string;
+  payment: { status: PaymentStatus; amountCents: number } | null;
+};

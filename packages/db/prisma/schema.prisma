@@ -42,6 +42,7 @@ model User {
   fullName         String    @map("full_name")
   phone            String?
   role             Role      @default(PASSENGER)
+  isAvailable      Boolean   @default(false) @map("is_available")
   stripeCustomerId String?   @map("stripe_customer_id")
   createdAt        DateTime  @default(now()) @map("created_at")
 

@@ -1,11 +1,18 @@
 import { auth } from "@clerk/nextjs/server";
 import { getQuote } from "@repo/core/services";
+import { createRateLimiter } from "@repo/core/utils";
 import type { ServiceType } from "@repo/core/types";
+
+const rateLimiter = createRateLimiter(30, 60 * 1000);
 
 export async function GET(req: Request) {
   const { userId } = await auth();
   if (!userId) {
     return Response.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  if (!rateLimiter.check(`quotes:${userId}`)) {
+    return Response.json({ error: "Demasiadas solicitudes" }, { status: 429 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -40,13 +47,14 @@ export async function GET(req: Request) {
         destLat: 0,
         destLng: 0,
         serviceType: "HOURLY",
-        hours: hours ? parseInt(hours) : 1,
+        hours: Math.max(1, hours ? parseInt(hours) : 1),
       });
       return Response.json(quote);
     } catch (error) {
+      console.error("[quotes] Error getting HOURLY quote:", error);
       return Response.json(
-        { error: (error as Error).message },
-        { status: 400 }
+        { error: "Error interno del servidor" },
+        { status: 500 }
       );
     }
   }
@@ -70,9 +78,10 @@ export async function GET(req: Request) {
 
     return Response.json(quote);
   } catch (error) {
+    console.error("[quotes] Error getting quote:", error);
     return Response.json(
-      { error: (error as Error).message },
-      { status: 400 }
+      { error: "Error interno del servidor" },
+      { status: 500 }
     );
   }
 }

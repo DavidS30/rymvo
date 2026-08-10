@@ -5,14 +5,17 @@ import { useState, useEffect, useCallback } from "react";
 type BookingRow = {
   id: string;
   status: string;
-  passenger: { fullName: string };
+  passengerName: string;
   originAddress: string;
   destAddress: string;
   scheduledAt: string;
   serviceType: string;
   baseFareCents: number;
   platformFeeCents: number;
+  driverId: string | null;
+  driverName: string | null;
 };
+type Driver = { id: string; fullName: string; email: string };
 
 type PaginatedData = {
   data: BookingRow[];
@@ -78,6 +81,21 @@ export default function AdminBookingsPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [assigning, setAssigning] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/admin/drivers").then((r) => r.ok ? r.json() : null).then((d) => setDrivers(d?.data ?? [])).catch(() => setDrivers([]));
+  }, []);
+
+  const assignDriver = async (bookingId: string, driverId: string) => {
+    setAssigning(bookingId);
+    try {
+      const r = await fetch(`/api/v1/admin/bookings/${bookingId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ driverId: driverId || null }) });
+      if (!r.ok) throw new Error("No se pudo asignar el conductor");
+      await fetchBookings();
+    } catch (e) { setError((e as Error).message); } finally { setAssigning(null); }
+  };
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -129,7 +147,7 @@ export default function AdminBookingsPage() {
     new Date(iso).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Reservas</h1>
         <p className="mt-1 text-sm text-gray-500">{data.total} reservas en total</p>
@@ -162,7 +180,7 @@ export default function AdminBookingsPage() {
           />
         </label>
 
-        <button onClick={fetchBookings} className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50">
+        <button onClick={fetchBookings} className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-[#d9a84e] hover:bg-gray-50">
           Actualizar
         </button>
       </div>
@@ -171,21 +189,22 @@ export default function AdminBookingsPage() {
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto overscroll-x-contain">
+        <table className="min-w-[860px] w-full text-sm">
           <thead>
             <tr className="border-b bg-gray-50 text-left text-xs font-semibold uppercase text-gray-500">
               <th className="px-4 py-3">Pasajero</th>
               <th className="px-4 py-3">Servicio</th>
               <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3">Estado</th>
-              <th className="px-4 py-3 text-right">Total</th>
+              <th className="px-4 py-3">Conductor</th><th className="px-4 py-3 text-right">Total</th>
             </tr>
           </thead>
           <tbody>
             {loading && (
               Array.from({ length: 3 }).map((_, i) => (
                 <tr key={i} className="border-b">
-                  {Array.from({ length: 5 }).map((_, j) => (
+                  {Array.from({ length: 6 }).map((_, j) => (
                     <td key={j} className="px-4 py-3"><div className="h-4 w-20 animate-pulse rounded bg-gray-200" /></td>
                   ))}
                 </tr>
@@ -194,7 +213,7 @@ export default function AdminBookingsPage() {
 
             {!loading && data.data.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-gray-400">No se encontraron reservas.</td>
+                 <td colSpan={6} className="px-4 py-12 text-center text-gray-400">No se encontraron reservas.</td>
               </tr>
             )}
 
@@ -202,7 +221,7 @@ export default function AdminBookingsPage() {
               const badge = STATUS_BADGE[row.status] ?? { label: row.status, style: "bg-gray-100" };
               return (
                 <tr key={row.id} className="border-b transition-colors hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">{row.passenger.fullName}</td>
+                  <td className="px-4 py-3 font-medium text-gray-900">{row.passengerName}</td>
                   <td className="px-4 py-3 text-gray-600">{SERVICE_LABELS[row.serviceType] ?? row.serviceType}</td>
                   <td className="px-4 py-3 text-gray-600">
                     {formatDate(row.scheduledAt)}<br />
@@ -211,12 +230,14 @@ export default function AdminBookingsPage() {
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${badge.style}`}>{badge.label}</span>
                   </td>
+                  <td className="px-4 py-3"><select aria-label={`Conductor para ${row.passengerName}`} value={row.driverId ?? ""} disabled={assigning === row.id} onChange={(e) => assignDriver(row.id, e.target.value)} className="rymvo-select max-w-44 rounded-lg border bg-white px-3 py-2 text-xs font-medium"><option value="">Sin asignar</option>{drivers.map((driver) => <option key={driver.id} value={driver.id}>{driver.fullName}</option>)}</select></td>
                   <td className="px-4 py-3 text-right font-medium text-gray-900">{formatPrice(row.baseFareCents)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        </div>
 
         {/* Pagination */}
         {totalPages > 1 && (

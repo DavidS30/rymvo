@@ -1639,6 +1639,34 @@ Los atributos `target="_blank"` y `rel="noopener noreferrer"` son necesarios por
 
 Los deep links son la forma estándar de integrar navegación sin usar APIs nativas ni SDKs. No requieren permisos especiales ni configuración adicional.
 
+### 19.1 Migración de Leaflet a Google Maps
+
+La pantalla de reserva ahora usa Google Maps como mapa principal para unificar la experiencia con Google Places Autocomplete y Distance Matrix.
+
+Archivo: `apps/web/components/GoogleLocationMap.tsx`
+
+El componente usa `@googlemaps/js-api-loader` y carga la librería Maps de forma dinámica en el cliente. Se usa `next/dynamic({ ssr: false })` desde la página porque Google Maps depende de `window` y no puede renderizarse durante SSR.
+
+Flujo:
+
+```text
+Google Maps JS API → mapa visible
+Autocomplete       → dirección + coordenadas
+Click en mapa      → coordenadas + marcador
+Geolocation API    → origen inicial del pasajero
+Distance Matrix    → distancia real de conducción
+```
+
+La API key utilizada por el frontend es `NEXT_PUBLIC_GOOGLE_PLACES_API_KEY`. Debe tener habilitadas `Maps JavaScript API`, `Places API` y `Distance Matrix API`, además de restricciones por dominio.
+
+El componente mantiene dos marcadores:
+- `originMarker`: marcador A, origen
+- `destMarker`: marcador B, destino
+
+Cuando el usuario selecciona una dirección desde Autocomplete, las props `externalOrigin` y `externalDest` actualizan el marcador y el mapa ejecuta `panTo()`/`setZoom()`. Cuando hace click en el mapa, el componente notifica las coordenadas al formulario mediante `onOriginChange` y `onDestChange`.
+
+Leaflet y OpenStreetMap permanecen instalados como referencia técnica, pero ya no son el mapa principal de la pantalla de reserva. Se pueden eliminar posteriormente cuando confirmemos que Google Maps queda estable en desarrollo y producción.
+
 ---
 
 ## 20. Integraciones con terceros — Guía completa de configuración

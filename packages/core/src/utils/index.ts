@@ -80,3 +80,30 @@ export function haversineDistance(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round(R * c * 10) / 10;
 }
+
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export function createRateLimiter(maxRequests: number, windowMs: number) {
+  const hits = new Map<string, { count: number; resetAt: number }>();
+
+  return {
+    check(key: string): boolean {
+      const now = Date.now();
+      const entry = hits.get(key);
+      if (!entry || now > entry.resetAt) {
+        hits.set(key, { count: 1, resetAt: now + windowMs });
+        return true;
+      }
+      if (entry.count >= maxRequests) return false;
+      entry.count++;
+      return true;
+    },
+  };
+}
